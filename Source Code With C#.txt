@@ -1,0 +1,418 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Text;
+using System.Threading.Tasks;
+using System.Collections;
+using System.Xml.Linq;
+using System.ComponentModel.Design.Serialization;
+using System.Runtime.CompilerServices;
+
+namespace Algorithms
+{
+   
+    internal class Program
+    {
+        //Linear search (sequential search) algorithm
+        public static int LinearSearch(int value, int[] Arr)
+        {
+
+            for (int i = 0; i < Arr.Length; i++)
+            {
+                if (value == Arr[i])
+                    return i;
+            }
+
+            return -1;
+        }
+
+        //Binary Search 
+        public static int BinarySearch(int TargetValue, int[] Arr)
+        {
+            Array.Sort(Arr);
+
+            int Start = 0;
+            int End = Arr.Length - 1;
+            int Mid = Start + (End - Start) / 2;
+
+            while (Start <= End) 
+            {
+                int Value = Arr[Mid];
+
+
+                if (Value == TargetValue)
+                    return Mid;
+
+                if (TargetValue > Value)
+                {
+                    Start = Mid + 1;
+                }
+
+                if (TargetValue < Value)
+                {
+                    End = Mid - 1;
+                }
+
+                 Mid = Start + (End - Start) / 2;
+            }
+
+            return -1;
+        }
+
+        //Sort Algorithms
+        public class SortAlgorithms
+        {
+            private static void Swap (ref int a, ref int b)
+            {
+                int temp = a;
+                a = b;
+                b = temp;
+            }
+            private static int IndexOfSmallestElementInRange(int[]Arr,int Start,int End)
+            {
+                int index = Start;
+
+                for (int i = Start; i < End; i++) 
+                {
+                    if (Arr[i] <= Arr[index])
+                        index = i;
+                }
+
+                return index;
+            }
+            private static int IndexOfLargestElementInRange(int[] Arr,int Start,int End)
+            {
+                int index = Start;
+                for (int i = Start; i < End; i++)
+                {
+                    if (Arr[i] >= Arr[index])
+                        index = i;
+                }
+
+                return index;
+            }
+            public static void BubbleSortAsc(ref int[]Arr)
+            {
+                for (int i = 0; i < Arr.Length; i++) 
+                {
+                    for (int j = i + 1; j < Arr.Length; j++)
+                    {
+                        if (Arr[j] <= Arr[i])
+                            Swap(ref Arr[j], ref Arr[i]);
+                    }
+                }
+            }
+            public static void BubbleSortDece(ref int[] Arr)
+            {
+                for (int i = 0; i < Arr.Length; i++)
+                {
+                    for (int j = i + 1; j < Arr.Length; j++)
+                    {
+                        if (Arr[j] >= Arr[i])
+                            Swap(ref Arr[j], ref Arr[i]);
+                    }
+                }
+            }
+            public static void SelectionSortDece(ref int[] Arr)
+            {
+                for (int i = 0; i < Arr.Length; i++)
+                {
+                    Swap(ref Arr[i], ref Arr[IndexOfLargestElementInRange(Arr, i, Arr.Length)]);
+
+                }
+            }
+            public static void SelectionSortAse(ref int[] Arr)
+            {
+                for (int i = 0; i < Arr.Length; i++) 
+                {
+                    Swap(ref Arr[i], ref Arr[IndexOfSmallestElementInRange(Arr, i , Arr.Length)]);
+                
+                }
+            }
+            public static void InsertionSort(ref int[] arr)
+            {
+                int n = arr.Length;
+                for (int i = 1; i < n; ++i)
+                {
+                    int key = arr[i];
+                    int j = i - 1;
+
+                    // Move elements of arr[0..i-1], that are greater than key,
+                    // to one position ahead of their current position
+                    while (j >= 0 && arr[j] > key)
+                    {
+                        arr[j + 1] = arr[j];
+                        j = j - 1;
+                    }
+                    arr[j + 1] = key;
+                }
+            }
+        }
+
+        public class Node<T>
+        {
+            public T Value { get; set; }
+            public List<Node<T>> ChildNodes { get; set; }
+
+            public Node(T value)
+            {
+                this.Value = value;
+                ChildNodes= new List<Node<T>>();
+            }
+
+            public void AddNode(Node<T> NewNode)
+            {
+                this.ChildNodes.Add(NewNode); 
+            }
+            public Node<T> Find(T Value)
+            {
+                if (EqualityComparer<T>.Default.Equals(Value, this.Value))
+                    return this;
+                foreach(Node<T> node in ChildNodes)
+                {
+                    var FoundNode = node.Find(Value);
+                    if (FoundNode != null)
+                        return FoundNode;
+                }
+                return null;
+            }
+
+        }
+
+        public class Tree<T>
+        {
+            public Node<T> Root { get; set; }
+
+
+            public Tree (Node<T> root)
+            {
+                this.Root = root;
+            }
+
+            private void Print(Node<T> Root, string Spaces = "")
+            {
+                Spaces += "   ";
+                Console.WriteLine(Spaces + Root.Value);
+                foreach (var child in Root.ChildNodes)
+                {
+                    Print(child, Spaces);
+                }
+            }
+
+            public void Print()
+            {
+                this.Print(Root);
+            }
+            
+            public Node<T> Find(T Value)
+            {
+               return Root.Find(Value);
+            }
+
+        }
+
+        public class BTree<T>
+        {
+            public BNode<T> Root { get; set; }
+
+            public BTree(BNode<T> RootNode)
+            {
+                this.Root = RootNode;
+            }
+
+            private void _Print(BNode<T> Root,string Space="")
+            {
+                Space += " ";
+                Console.WriteLine(Space+Root.Value);
+                if (Root.RightNode != null)
+                    _Print(Root.RightNode, Space);
+                if(Root.LeftNode != null)
+                    _Print(Root.LeftNode, Space);
+            }
+
+            public void Print()
+            {
+                _Print(this.Root);
+            }
+        }
+
+
+        public class BNode<T>
+        {
+            public T Value { get; set; }
+            public BNode<T> RightNode { get; set; } = null;
+            public BNode<T> LeftNode { get; set; } = null;
+
+            public BNode(T Value)
+            {
+                this.Value = Value;
+            }
+
+            public void AddNode(T value)
+            {
+                if (RightNode == null)
+                    RightNode = new BNode<T>(Value);
+
+
+                if (LeftNode == null)
+                    LeftNode = new BNode<T>(Value);
+            }
+        }
+
+        static void Main(string[] args)
+        {
+            /*
+             *  10
+                  11
+                   15
+                   16
+                  12
+                   13
+                   14
+             */
+
+            //For Binary Tree=============================================================
+            BNode<int> RootNumber = new BNode<int>(10);
+
+
+            BNode<int> Level1ChildRight = new BNode<int>(11);
+            BNode<int> Level1ChildLeft = new BNode<int>(12);
+
+            RootNumber.AddNode(11);
+            RootNumber.AddNode(12);
+
+
+            BNode<int> Level2ChildRight_Left = new BNode<int>(13);
+            BNode<int> Level2ChildLeft_Left = new BNode<int>(14);
+            Level1ChildLeft.AddNode(13);
+            Level1ChildLeft.AddNode(14);
+
+
+
+            BNode<int> Level2ChildRight_Right = new BNode<int>(15);
+            BNode<int> Level2ChildLeft_Right = new BNode<int>(16);
+            Level1ChildRight.AddNode(15);
+            Level1ChildRight.AddNode(16);
+
+
+            BTree<int> NumberTree = new BTree<int>(RootNumber);
+            NumberTree.Print();
+            //===============================================================================
+
+
+            //For General Tree=============================================================
+            // Node<String> Root = new Node<string>("CEO");
+            // Node<string> LevelOneChiled1 = new Node<string>("CTO");
+            // Node<string> LevelOneChiled2 = new Node<string>("CFO");
+            // Node<string> LevelOneChiled3 = new Node<string>("CMO");
+
+            // Root.AddNode(LevelOneChiled1);
+            // Root.AddNode(LevelOneChiled2);
+            // Root.AddNode(LevelOneChiled3);
+
+            // Node<string> LevelTwoChiled3 = new Node<string>("UI");
+            // Node<string> LevelTwoChiled2 = new Node<string>("UX");
+            // Node<string> LevelTwoChiled8 = new Node<string>("Programmer");
+            // Node<string> LevelTwoChiled7 = new Node<string>("Developer");
+            // LevelOneChiled1.AddNode(LevelTwoChiled3);
+            // LevelOneChiled1.AddNode(LevelTwoChiled2);
+            // LevelOneChiled1.AddNode(LevelTwoChiled8);
+            // LevelOneChiled1.AddNode(LevelTwoChiled7);
+
+            // Node<string> LevelTwoChiled4 = new Node<string>("Accountant");
+            // LevelOneChiled2.AddNode(LevelTwoChiled4);
+
+            // Node<string> LevelTwoChiled1 = new Node<string>("Marketing");
+            // Node<string> LevelTwoChiled5 = new Node<string>("Adviser");
+            // Node<string> LevelTwoChiled6 = new Node<string>("Designer");
+            // LevelOneChiled3.AddNode(LevelTwoChiled1);
+            // LevelOneChiled3.AddNode(LevelTwoChiled5);
+            // LevelOneChiled3.AddNode(LevelTwoChiled6);
+
+            // Tree<string> GeneralTree = new Tree<string>(Root);
+            // GeneralTree.Print();
+            // Console.WriteLine("\n\nFinding UX");
+            // var Node=GeneralTree.Find("UX");
+            // if (Node != null)
+            //     Console.WriteLine("Found :)");
+            // else
+            //     Console.WriteLine("UX Not Found :(");
+            // Console.WriteLine("\n\nFinding DBA");
+            //var Node1= GeneralTree.Find("DBA");
+            // if (Node1 != null)
+            //     Console.WriteLine("DBA Found :)");
+            // else
+            //     Console.WriteLine("DBA Not found :(");
+            //============================================================================
+
+            int[] Arr = { 115, 56, 5, 8, 88, 1, 36, 5, 2, 45, 6, 16, 65, 9, 91 };
+
+            int Value = 5651;
+
+
+            //For Linear Search============================================================
+
+
+            //int Index = LinearSearch(Value, Arr);
+
+            //if (Index != -1)
+            //    Console.WriteLine("The Target value in index: " + (Index + 1));
+            //else
+            //    Console.WriteLine($"The value {Value} not found");
+
+            //==============================================================================
+
+
+            //For binary Search============================================================
+
+            //int Index= BinarySearch(Value, Arr);
+
+            //if (Index == -1)
+            //    Console.WriteLine($"The target value {Value} not found!");
+            //else
+            //    Console.WriteLine("The Target value in index: " + (Index + 1));
+
+
+
+            //Bubble Sort Algorithms==========================================================
+
+            //Console.WriteLine("Unsorted array: "+string.Join(",", Arr));
+
+            //SortAlgorithms.BubbleSortAsc(ref Arr);
+
+            //Console.WriteLine("\nsorted array Asc: "+string.Join(",", Arr));
+
+            //SortAlgorithms.BubbleSortDece(ref Arr);
+            //Console.WriteLine("\nsorted array Decs: "+string.Join(",", Arr));
+
+            //================================================================================
+
+            //Selection Sort Algorithms=======================================================
+            //Console.WriteLine("Unsorted array: "+string.Join(",", Arr));
+
+            //SortAlgorithms.SelectionSortAse(ref Arr);
+
+            //Console.WriteLine("\nsorted array Asc: " + string.Join(",", Arr));
+
+            //SortAlgorithms.SelectionSortDece(ref Arr);
+            //Console.WriteLine("\nsorted array Decs: " + string.Join(",", Arr));
+            //================================================================================
+
+            //Insertion Sort Algorithms=======================================================
+
+            //Console.WriteLine("Unsorted array: " + string.Join(",", Arr));
+            //SortAlgorithms.InsertionSort(ref Arr);
+            //Console.WriteLine("\nsorted array: " + string.Join(",", Arr));
+
+            //================================================================================
+
+
+
+
+            //non generic data type can insert any data type inside it so this make them more Dangrous
+
+            Console.ReadKey();
+        }
+    }
+}
