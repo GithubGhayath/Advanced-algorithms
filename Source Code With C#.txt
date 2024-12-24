@@ -287,7 +287,45 @@ namespace Algorithms
 
             }
 
-
+            private void PreOrderTraversal(BNode<T> node)
+            {
+                if (node != null)
+                {
+                    Console.Write(node.Value + " ");
+                    PreOrderTraversal(node.Left);
+                    PreOrderTraversal(node.Right);
+                }
+            }
+            private void PostOrderTraversal(BNode<T> node)
+            {
+                if (node != null)
+                {
+                    PostOrderTraversal(node.Left);
+                    PostOrderTraversal(node.Right);
+                    Console.Write(node.Value + " ");
+                }
+            }
+            private void InOrderTraversal(BNode<T> node)
+            {
+                if (node != null)
+                {
+                    InOrderTraversal(node.Left);
+                    Console.Write(node.Value + " ");
+                    InOrderTraversal(node.Right);
+                }
+            }
+            public void InOrderTraversal()
+            {
+                InOrderTraversal(Root);
+            }
+            public void PostOrderTraversal()
+            {
+                PostOrderTraversal(Root);
+            }
+            public void PreOrderTraversal()
+            {
+                PreOrderTraversal(Root);
+            }
         }
 
 
@@ -309,28 +347,24 @@ namespace Algorithms
 
             //For Binary Tree=============================================================
             BTree<int> NumberTree = new BTree<int>();
-
-            NumberTree.Insert(11);
-            NumberTree.Insert(12);
-
-            NumberTree.Insert(13);
-            NumberTree.Insert(14);
-
-            NumberTree.Insert(15);
-            NumberTree.Insert(16);
-            NumberTree.Insert(17);
-
-            NumberTree.Insert(18);
-            NumberTree.Insert(19);
-            NumberTree.Insert(20);
-            NumberTree.Insert(21);
-            NumberTree.Insert(22);
-            NumberTree.Insert(23);
-            NumberTree.Insert(24);
-            NumberTree.Insert(25);
+            Console.WriteLine("Original element inserted to tree: 1 , 2 , 3 , 4 , 5 , 6 , 7\n");
+            NumberTree.Insert(1);
+            NumberTree.Insert(2);
+            NumberTree.Insert(3);
+            NumberTree.Insert(4);
+            NumberTree.Insert(5);
+            NumberTree.Insert(6);
+            NumberTree.Insert(7);
+          
 
 
             NumberTree.Print();
+            Console.WriteLine("\n\nPreOrder Traversal: ");
+            NumberTree.PreOrderTraversal();
+            Console.WriteLine("\nPostOrder Traversal: ");
+            NumberTree.PostOrderTraversal();
+            Console.WriteLine("\nInOrder Traversal: ");
+            NumberTree.InOrderTraversal();
             //===============================================================================
 
 
