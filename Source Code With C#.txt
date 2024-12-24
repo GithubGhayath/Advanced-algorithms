@@ -214,89 +214,122 @@ namespace Algorithms
 
         public class BTree<T>
         {
-            public BNode<T> Root { get; set; }
+            private BNode<T> Root { get; set; }
 
-            public BTree(BNode<T> RootNode)
+            public BTree()
             {
-                this.Root = RootNode;
+                this.Root = null;
             }
 
-            private void _Print(BNode<T> Root,string Space="")
+            private void _Print(BNode<T> root, int space)
             {
-                Space += " ";
-                Console.WriteLine(Space+Root.Value);
-                if (Root.RightNode != null)
-                    _Print(Root.RightNode, Space);
-                if(Root.LeftNode != null)
-                    _Print(Root.LeftNode, Space);
+                int COUNT = 10;  // Distance between levels to adjust the visual representation
+                if (root == null)
+                    return;
+
+
+                space += COUNT;
+                _Print(root.Right, space); // Print right subtree first, then root, and left subtree last
+
+
+                Console.WriteLine();
+                for (int i = COUNT; i < space; i++)
+                    Console.Write(" ");
+                Console.WriteLine(root.Value); // Print the current node after space
+
+
+                _Print(root.Left, space); // Recur on the left child
             }
 
             public void Print()
             {
-                _Print(this.Root);
+                _Print(this.Root,0);
             }
+
+
+            //Level order insertions 
+            public void Insert(T Value)
+            {
+                if (Root == null) 
+                {
+                    Root = new BNode<T>(Value);
+                    return;
+                }
+
+                Queue<BNode<T>> queue = new Queue<BNode<T>>();
+                queue.Enqueue(Root);
+
+                while (queue.Count > 0) 
+                {
+                    var Current = queue.Dequeue();
+
+                    if (Current.Left == null)
+                    {
+                        Current.Left = new BNode<T>(Value);
+                        break;
+                    }
+                    else
+                    {
+                        queue.Enqueue(Current.Left);
+                    }
+
+                    if (Current.Right == null)
+                    {
+                        Current.Right = new BNode<T>(Value);
+                        break;
+                    }
+                    else
+                    {
+                        queue.Enqueue(Current.Right);
+                    }
+                }
+
+
+            }
+
+
         }
 
 
         public class BNode<T>
         {
             public T Value { get; set; }
-            public BNode<T> RightNode { get; set; } = null;
-            public BNode<T> LeftNode { get; set; } = null;
+            public BNode<T> Right { get; set; } = null;
+            public BNode<T> Left { get; set; } = null;
 
             public BNode(T Value)
             {
                 this.Value = Value;
-            }
-
-            public void AddNode(T value)
-            {
-                if (RightNode == null)
-                    RightNode = new BNode<T>(Value);
-
-
-                if (LeftNode == null)
-                    LeftNode = new BNode<T>(Value);
-            }
+            }  
         }
 
         static void Main(string[] args)
         {
-            /*
-             *  10
-                  11
-                   15
-                   16
-                  12
-                   13
-                   14
-             */
+          
 
             //For Binary Tree=============================================================
-            BNode<int> RootNumber = new BNode<int>(10);
+            BTree<int> NumberTree = new BTree<int>();
+
+            NumberTree.Insert(11);
+            NumberTree.Insert(12);
+
+            NumberTree.Insert(13);
+            NumberTree.Insert(14);
+
+            NumberTree.Insert(15);
+            NumberTree.Insert(16);
+            NumberTree.Insert(17);
+
+            NumberTree.Insert(18);
+            NumberTree.Insert(19);
+            NumberTree.Insert(20);
+            NumberTree.Insert(21);
+            NumberTree.Insert(22);
+            NumberTree.Insert(23);
+            NumberTree.Insert(24);
+            NumberTree.Insert(25);
 
 
-            BNode<int> Level1ChildRight = new BNode<int>(11);
-            BNode<int> Level1ChildLeft = new BNode<int>(12);
-
-            RootNumber.AddNode(11);
-            RootNumber.AddNode(12);
-
-
-            BNode<int> Level2ChildRight_Left = new BNode<int>(13);
-            BNode<int> Level2ChildLeft_Left = new BNode<int>(14);
-            Level1ChildLeft.AddNode(13);
-            Level1ChildLeft.AddNode(14);
-
-
-
-            BNode<int> Level2ChildRight_Right = new BNode<int>(15);
-            BNode<int> Level2ChildLeft_Right = new BNode<int>(16);
-            Level1ChildRight.AddNode(15);
-            Level1ChildRight.AddNode(16);
-
-
-            BTree<int> NumberTree = new BTree<int>(RootNumber);
             NumberTree.Print();
             //===============================================================================
 
