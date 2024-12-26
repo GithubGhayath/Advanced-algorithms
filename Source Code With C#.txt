@@ -8,6 +8,7 @@ using System.Collections;
 using System.Xml.Linq;
 using System.ComponentModel.Design.Serialization;
 using System.Runtime.CompilerServices;
+using System.Security.Policy;
 
 namespace Algorithms
 {
@@ -150,6 +151,7 @@ namespace Algorithms
             }
         }
 
+        //General Tree=============================
         public class Node<T>
         {
             public T Value { get; set; }
@@ -179,7 +181,6 @@ namespace Algorithms
             }
 
         }
-
         public class Tree<T>
         {
             public Node<T> Root { get; set; }
@@ -211,17 +212,20 @@ namespace Algorithms
             }
 
         }
+        //=========================================
 
-        public class BTree<T>
+
+        //Binary Tree=============================
+        public class BinaryTree<T>
         {
-            private BNode<T> Root { get; set; }
+            private BinaryNode<T> Root { get; set; }
 
-            public BTree()
+            public BinaryTree()
             {
                 this.Root = null;
             }
 
-            private void _Print(BNode<T> root, int space)
+            private void _Print(BinaryNode<T> root, int space)
             {
                 int COUNT = 10;  // Distance between levels to adjust the visual representation
                 if (root == null)
@@ -243,29 +247,29 @@ namespace Algorithms
 
             public void Print()
             {
-                _Print(this.Root,0);
+                _Print(this.Root, 0);
             }
 
 
             //Level order insertions 
             public void Insert(T Value)
             {
-                if (Root == null) 
+                if (Root == null)
                 {
-                    Root = new BNode<T>(Value);
+                    Root = new BinaryNode<T>(Value);
                     return;
                 }
 
-                Queue<BNode<T>> queue = new Queue<BNode<T>>();
+                Queue<BinaryNode<T>> queue = new Queue<BinaryNode<T>>();
                 queue.Enqueue(Root);
 
-                while (queue.Count > 0) 
+                while (queue.Count > 0)
                 {
                     var Current = queue.Dequeue();
 
                     if (Current.Left == null)
                     {
-                        Current.Left = new BNode<T>(Value);
+                        Current.Left = new BinaryNode<T>(Value);
                         break;
                     }
                     else
@@ -275,7 +279,7 @@ namespace Algorithms
 
                     if (Current.Right == null)
                     {
-                        Current.Right = new BNode<T>(Value);
+                        Current.Right = new BinaryNode<T>(Value);
                         break;
                     }
                     else
@@ -287,7 +291,7 @@ namespace Algorithms
 
             }
 
-            private void PreOrderTraversal(BNode<T> node)
+            private void PreOrderTraversal(BinaryNode<T> node)
             {
                 if (node != null)
                 {
@@ -296,7 +300,7 @@ namespace Algorithms
                     PreOrderTraversal(node.Right);
                 }
             }
-            private void PostOrderTraversal(BNode<T> node)
+            private void PostOrderTraversal(BinaryNode<T> node)
             {
                 if (node != null)
                 {
@@ -305,7 +309,7 @@ namespace Algorithms
                     Console.Write(node.Value + " ");
                 }
             }
-            private void InOrderTraversal(BNode<T> node)
+            private void InOrderTraversal(BinaryNode<T> node)
             {
                 if (node != null)
                 {
@@ -313,6 +317,35 @@ namespace Algorithms
                     Console.Write(node.Value + " ");
                     InOrderTraversal(node.Right);
                 }
+            }
+            private void LevelOrderTraversal(BinaryNode<T> RootNode)
+            {
+                if (RootNode == null) return;
+
+                Queue<BinaryNode<T>> Nodes = new Queue<BinaryNode<T>>();
+                Nodes.Enqueue(RootNode);
+
+                while (Nodes.Count > 0)
+                {
+
+                    var CurrentNode = Nodes.Dequeue();
+
+                    Console.Write(CurrentNode.Value+" ");
+
+                    if (CurrentNode.Left != null)
+                    {
+                        Nodes.Enqueue(CurrentNode.Left);
+                    }
+
+                    if (CurrentNode.Right != null)
+                    {
+                        Nodes.Enqueue(CurrentNode.Right);
+                    }
+                }
+            }
+            public void LevelOrderTraversal()
+            {
+                LevelOrderTraversal(this.Root);
             }
             public void InOrderTraversal()
             {
@@ -327,44 +360,192 @@ namespace Algorithms
                 PreOrderTraversal(Root);
             }
         }
-
-
-        public class BNode<T>
+        public class BinaryNode<T>
         {
             public T Value { get; set; }
-            public BNode<T> Right { get; set; } = null;
-            public BNode<T> Left { get; set; } = null;
+            public BinaryNode<T> Right { get; set; } = null;
+            public BinaryNode<T> Left { get; set; } = null;
 
-            public BNode(T Value)
+            public BinaryNode(T Value)
             {
                 this.Value = Value;
             }  
         }
+        //========================================
 
+        //Aplication on Binary Tree===============
+        public class BinarySearchTree<T> where T : IComparable<T>
+        {
+
+            public bool _CompareValues(T value1, T value2)
+            {
+                return value1.CompareTo(value2) > 0; // Example: Check if value1 is greater than value2
+
+                //If return true: value1 > value2
+                //else value2 > value1
+            }
+
+
+            private BinaryNode<T> Root;
+            public BinarySearchTree()
+            {
+                Root = null;
+            }
+            public void Insert(T Value)
+            {
+                if (Root == null)
+                {
+                    Root = new BinaryNode<T>(Value);
+                    return;
+                }
+
+                Queue<BinaryNode<T>> Nodes = new Queue<BinaryNode<T>>();
+                Nodes.Enqueue(Root);
+
+                while( Nodes.Count > 0 )
+                {
+                    var CurrentNode = Nodes.Dequeue();
+
+                    if (_CompareValues(CurrentNode.Value,Value))
+                    {
+                        //CurrentNode.Value > Value
+                        if (CurrentNode.Left == null)
+                            CurrentNode.Left = new BinaryNode<T>(Value);
+                        else
+                            Nodes.Enqueue(CurrentNode.Left);
+                    }
+                    else
+                    {
+                        //CurrentNode.Value < Value
+                        if (CurrentNode.Right == null)
+                            CurrentNode.Right = new BinaryNode<T>(Value);
+                        else
+                            Nodes.Enqueue(CurrentNode.Right);
+                    }
+                }
+            }
+
+            private void _Print(BinaryNode<T> root, int space)
+            {
+                int COUNT = 10;  // Distance between levels to adjust the visual representation
+                if (root == null)
+                    return;
+
+
+                space += COUNT;
+                _Print(root.Right, space); // Print right subtree first, then root, and left subtree last
+
+
+                Console.WriteLine();
+                for (int i = COUNT; i < space; i++)
+                    Console.Write(" ");
+                Console.WriteLine(root.Value); // Print the current node after space
+
+
+                _Print(root.Left, space); // Recur on the left child
+            }
+
+            public void PrintAsTree()
+            {
+                _Print(Root, 0);
+            }
+            private void _InOrderTraversal(BinaryNode<T> node)
+            {
+                if (node != null)
+                {
+                    _InOrderTraversal(node.Left);
+                    Console.Write(node.Value + " ");
+                    _InOrderTraversal(node.Right);
+                }
+            }
+
+            public void Print()
+            {
+                _InOrderTraversal(this.Root);
+            }
+
+            public BinaryNode<T> Find(BinaryNode<T> CurrentRoot, T Value)
+            {
+
+                if (CurrentRoot == null) return null;
+
+                else if (EqualityComparer<T>.Default.Equals(CurrentRoot.Value, Value)) return CurrentRoot;
+
+                if (_CompareValues(CurrentRoot.Value, Value))
+                {
+                    return Find(CurrentRoot.Left, Value);
+                }
+                else
+                {
+                    return Find(CurrentRoot.Right, Value);
+                }
+             
+              
+            }
+            public BinaryNode<T> Find(T Value)
+            {
+               return Find(this.Root, Value);
+            }
+        }
+        //========================================
         static void Main(string[] args)
         {
-          
+            //For Binary Search Tree========================================================
+
+            BinarySearchTree<int> BST = new BinarySearchTree<int>();
+            BST.Insert(40);
+            BST.Insert(50);
+            BST.Insert(30);
+            BST.Insert(45);
+            BST.Insert(60);
+            BST.Insert(15);
+            BST.Insert(20);
+
+
+            BST.PrintAsTree();
+            Console.WriteLine("\nTree Element is: ");
+            BST.Print();
+
+            Console.WriteLine("\n\nFinding number 401 In Tree....");
+            var FoundNode = BST.Find(401);
+            if (FoundNode == null)
+                Console.WriteLine("Number 401 not found");
+            else
+                Console.WriteLine("Number 401 Found");
+
+
+            Console.WriteLine("\n\nFinding number 45 In Tree....");
+             FoundNode = BST.Find(45);
+            if (FoundNode == null)
+                Console.WriteLine("Number 45 not found");
+            else
+                Console.WriteLine("Number 45 Found");
+            //==============================================================================
 
             //For Binary Tree=============================================================
-            BTree<int> NumberTree = new BTree<int>();
-            Console.WriteLine("Original element inserted to tree: 1 , 2 , 3 , 4 , 5 , 6 , 7\n");
-            NumberTree.Insert(1);
-            NumberTree.Insert(2);
-            NumberTree.Insert(3);
-            NumberTree.Insert(4);
-            NumberTree.Insert(5);
-            NumberTree.Insert(6);
-            NumberTree.Insert(7);
-          
+            //BinaryTree<int> NumberTree = new BinaryTree<int>();
+            //Console.WriteLine("Original element inserted to tree: 1 , 2 , 3 , 4 , 5 , 6 , 7\n");
+            //NumberTree.Insert(1);
+            //NumberTree.Insert(2);
+            //NumberTree.Insert(3);
+            //NumberTree.Insert(4);
+            //NumberTree.Insert(5);
+            //NumberTree.Insert(6);
+            //NumberTree.Insert(7);
 
 
-            NumberTree.Print();
-            Console.WriteLine("\n\nPreOrder Traversal: ");
-            NumberTree.PreOrderTraversal();
-            Console.WriteLine("\nPostOrder Traversal: ");
-            NumberTree.PostOrderTraversal();
-            Console.WriteLine("\nInOrder Traversal: ");
-            NumberTree.InOrderTraversal();
+
+            //NumberTree.Print();
+            //Console.WriteLine("\n\nLevelOrder Traversal: ");
+            //NumberTree.LevelOrderTraversal();
+
+
+            //Console.WriteLine("\n\nPreOrder Traversal: ");
+            //NumberTree.PreOrderTraversal();
+            //Console.WriteLine("\nPostOrder Traversal: ");
+            //NumberTree.PostOrderTraversal();
+            //Console.WriteLine("\nInOrder Traversal: ");
+            //NumberTree.InOrderTraversal();
             //===============================================================================
 
 
